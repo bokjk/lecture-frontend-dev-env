@@ -2,7 +2,7 @@ module.exports = {
   presets: [
     [
       "@babel/preset-env",
-      {
+      { 
         targets: {
           chrome: "79",
           ie: "11" // npm i regenerator-runtime 필요함
