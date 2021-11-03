@@ -9,6 +9,7 @@
     "babel-loader": "^8.0.6",
     "clean-webpack-plugin": "^3.0.0",
     "connect-api-mocker": "^1.7.0",
+    "copy-webpack-plugin": "^5.0.0",
     "core-js": "^2.6.11",
     "css-loader": "^3.4.1",
     "eslint": "^6.8.0",
@@ -18,6 +19,7 @@
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.13.0",
+    "optimize-css-assets-webpack-plugin": "^6.0.1",
     "prettier": "^1.19.1",
     "regenerator-runtime": "^0.13.3",
     "sass-loader": "^8.0.0",
@@ -30,7 +32,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --progress",
-    "build": "NODE_ENV=production webpack --progress",
+    "build": "cross-env NODE_ENV=production webpack",
+    "build2": "cross-env NODE_ENV=development2 webpack",
     "lint": "eslint src --fix"
   },
   "repository": {
@@ -45,6 +48,9 @@
   },
   "homepage": "https://github.com/jeonghwan-kim/lecture-frontend-dev-env#readme",
   "dependencies": {
-    "axios": "^0.19.1"
+    "axios": "^0.19.1",
+    "cross-env": "^7.0.3",
+    "postcss": "^8.3.11",
+    "terser-webpack-plugin": "^4.2.3"
   }
 }

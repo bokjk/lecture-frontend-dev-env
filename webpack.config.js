@@ -3,16 +3,24 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
+
+const mode = process.env.NODE_ENV || "development";
 
 module.exports = {
-  // TODO: 환경변수 NODE_ENV에 따라 development나 production 값을 설정하세요 
-  mode: "development",
+  // TODO: 환경변수 NODE_ENV에 따라 development나 production 값을 설정하세요
+  mode,
   entry: {
     main: "./src/app.js"
   },
   output: {
     filename: "[name].js",
     path: path.resolve("./dist")
+  },
+  externals: {
+    axios: "axios"
   },
   devServer: {
     overlay: true,
@@ -27,7 +35,7 @@ module.exports = {
       {
         test: /\.(scss|css)$/,
         use: [
-          process.env.NODE_ENV === "production"
+          mode === "production"
             ? MiniCssExtractPlugin.loader // 프로덕션 환경
             : "style-loader", // 개발 환경
           "css-loader",
@@ -60,18 +68,40 @@ module.exports = {
         env: process.env.NODE_ENV === "development" ? "(개발용)" : ""
       },
       minify:
-        process.env.NODE_ENV === "production"
+        mode === "production"
           ? {
               collapseWhitespace: true, // 빈칸 제거
               removeComments: true // 주석 제거
             }
           : false,
-      hash: process.env.NODE_ENV === "production"
+      hash: mode === "production"
     }),
     new CleanWebpackPlugin(),
-    ...(process.env.NODE_ENV === "production"
+    ...(mode === "production"
       ? [new MiniCssExtractPlugin({ filename: `[name].css` })]
-      : [])
-  ]
-  // TODO: 여기에 최적화 설정을 구성하세요 
+      : []),
+    new CopyPlugin([
+      {
+        from: "./node_modules/axios/dist/axios.min.js",
+        to: "./axios.min.js" // 목적지 파일에 들어간다
+      }
+    ])
+  ],
+  // TODO: 여기에 최적화 설정을 구성하세요
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true // 콘솔 로그를 제거한다
+          }
+        }
+      }),
+      new OptimizeCSSAssetsPlugin()
+    ],
+    splitChunks: {
+      chunks: "all"
+    }
+  }
 };
